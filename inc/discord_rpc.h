@@ -21,6 +21,8 @@
 
 #ifdef __cplusplus
 extern "C" {
+#else
+#include <stdbool.h>
 #endif
 
 #define DISCORD_PRESENCE_MAX_KEY_LENGTH 256
