@@ -23,23 +23,58 @@
 extern "C" {
 #endif
 
+#define DISCORD_PRESENCE_MAX_KEY_LENGTH 256
+#define DISCORD_PRESENCE_MIN_TEXT_LENGTH 2
+#define DISCORD_PRESENCE_MAX_TEXT_LENGTH 128
+#define DISCORD_PRESENCE_MIN_BUTTON_LABEL_LENGTH 1
+#define DISCORD_PRESENCE_MAX_BUTTON_LABEL_LENGTH 32
+#define DISCORD_PRESENCE_MAX_BUTTON_COUNT 2
+#define DISCORD_PRESENCE_MAX_URL_LENGTH 256
+
+typedef struct DiscordButton {
+    const char* label; /* FIXME limit? */
+    const char* url;   /* max 256 bytes */
+} DiscordButton;
+
+typedef enum DiscordActivityType {
+    DiscordActivityType_Playing = 0, // the default
+    // DiscordActivityType_Streaming = 1, // not allowed
+    DiscordActivityType_Listening = 2,
+    DiscordActivityType_Watching = 3,
+    // DiscordActivityType_Custom = 4, // not allowed
+    DiscordActivityType_Competing = 5
+} DiscordActivityType;
+
+typedef enum DiscordStatusDisplayType {
+    DiscordStatusDisplayType_Name = 0, // the default
+    DiscordStatusDisplayType_State = 1,
+    DiscordStatusDisplayType_Details = 2
+} DiscordStatusDisplayType;
+
 typedef struct DiscordRichPresence {
-    const char* state;   /* max 128 bytes */
-    const char* details; /* max 128 bytes */
+    DiscordActivityType type;
+    DiscordStatusDisplayType status_display_type;
+    const char* state;      // text
+    const char* stateUrl;   // url
+    const char* details;    // text
+    const char* detailsUrl; // url
     int64_t startTimestamp;
     int64_t endTimestamp;
-    const char* largeImageKey;  /* max 32 bytes */
-    const char* largeImageText; /* max 128 bytes */
-    const char* smallImageKey;  /* max 32 bytes */
-    const char* smallImageText; /* max 128 bytes */
-    const char* partyId;        /* max 128 bytes */
+    const char* largeImageKey;  // key
+    const char* largeImageText; // text
+    const char* largeImageUrl;  // url
+    const char* smallImageKey;  // key
+    const char* smallImageText; // text
+    const char* smallImageUrl;  // url
+    const char* partyId;        // max 128 bytes
     int partySize;
     int partyMax;
     int partyPrivacy;
-    const char* matchSecret;    /* max 128 bytes */
-    const char* joinSecret;     /* max 128 bytes */
-    const char* spectateSecret; /* max 128 bytes */
+    const char* matchSecret;    // max 128 bytes
+    const char* joinSecret;     // max 128 bytes
+    const char* spectateSecret; // max 128 bytes
     int8_t instance;
+    DiscordButton buttons[DISCORD_PRESENCE_MAX_BUTTON_COUNT];
 } DiscordRichPresence;
 
 typedef struct DiscordUser {
@@ -68,6 +103,7 @@ DISCORD_EXPORT void Discord_Initialize(const char* applicationId,
                                        DiscordEventHandlers* handlers,
                                        int autoRegister,
                                        const char* optionalSteamId);
+DISCORD_EXPORT bool Discord_Connected(void);
 DISCORD_EXPORT void Discord_Shutdown(void);
 
 /* checks for incoming messages, dispatches callbacks */

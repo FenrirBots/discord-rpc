@@ -70,7 +70,7 @@ static User connectedUser;
 
 // We want to auto connect, and retry on failure, but not as fast as possible. This does expoential
 // backoff from 0.5 seconds to 1 minute
-static Backoff ReconnectTimeMs(500, 60 * 1000);
+static Backoff ReconnectTimeMs(500, 10000 /*60 * 1000*/);
 static auto NextConnect = std::chrono::system_clock::now();
 static int Pid{0};
 static int Nonce{1};
@@ -345,6 +345,11 @@ extern "C" DISCORD_EXPORT void Discord_Initialize(const char* applicationId,
     };
 
     IoThread->Start();
+}
+
+extern "C" DISCORD_EXPORT bool Discord_Connected(void)
+{
+    return Connection->state == RpcConnection::State::Connected;
 }
 
 extern "C" DISCORD_EXPORT void Discord_Shutdown(void)

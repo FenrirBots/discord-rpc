@@ -12,9 +12,9 @@
 #pragma warning(disable : 6313) // Incorrect operator
 #endif                          // __MINGW32__
 
-#include "document.h"
-#include "stringbuffer.h"
-#include "writer.h"
+#include "rapidjson/document.h"
+#include "rapidjson/stringbuffer.h"
+#include "rapidjson/writer.h"
 
 #ifndef __MINGW32__
 #pragma warning(pop)
